@@ -60,12 +60,21 @@ void calibrateADC0(uint16_t *cal) {
 	return;
 }
 */
+#define SONIC_CONTROL_PIN PD7
+
 uint8_t calibrateADC0(uint16_t *min, uint16_t *max) {
 	uint16_t lowADC, highADC;
 
 	printString("\n\rSet the ADC to its LOWEST setting and hit <enter>:");
+	DDRD |= (1 << SONIC_CONTROL_PIN);              // set control to output
+	PORTD &= ~(1 << SONIC_CONTROL_PIN);            // clear control
+	_delay_us(5);                                  // wait a bit
+	PORTD |= (1 << SONIC_CONTROL_PIN);             // send a 25 microsecond control pulse
+	_delay_us(25);                                 //
+	//PORTD &= ~(1 << SONIC_CONTROL_PIN);            // clear control
 
 	while (receiveByte() != 0x0d) ;
+
 	ADCSRA |= (1 << ADSC);  // start conversion
 	loop_until_bit_is_clear(ADCSRA, ADSC);
 	lowADC = ADC;
@@ -73,6 +82,13 @@ uint8_t calibrateADC0(uint16_t *min, uint16_t *max) {
 	printWord(lowADC);
 
 	printString("\n\rSet the ADC to its HIGHEST setting and hit <enter>:");
+	DDRD |= (1 << SONIC_CONTROL_PIN);              // set control to output
+	PORTD &= ~(1 << SONIC_CONTROL_PIN);            // clear control
+	_delay_us(5);                                  // wait a bit
+	PORTD |= (1 << SONIC_CONTROL_PIN);             // send a 25 microsecond control pulse
+	_delay_us(25);                                 //
+	//PORTD &= ~(1 << SONIC_CONTROL_PIN);            // clear control
+
 	while (receiveByte() != 0x0d) ;
 	ADCSRA |= (1 << ADSC);  // start conversion
 	loop_until_bit_is_clear(ADCSRA, ADSC);
@@ -149,14 +165,27 @@ int main(void) {
 	printString("\r\n");
 
 	while (1) {
-		// read the ADC (currently a photoresistor
+		// read the ADC (currently an ultrasonic rangefinder
+		DDRD |= (1 << SONIC_CONTROL_PIN);              // set control to output
+		PORTD &= ~(1 << SONIC_CONTROL_PIN);            // clear control
+		_delay_us(5);                                  // wait a bit
+		PORTD |= (1 << SONIC_CONTROL_PIN);             // send a 25 microsecond control pulse
+		_delay_us(25);                                 //
+		//PORTD &= ~(1 << SONIC_CONTROL_PIN);            // clear control
+
 		ADCSRA |= (1 << ADSC);  // start conversion
 		loop_until_bit_is_clear(ADCSRA, ADSC);
 		adcValue = ADC;
-		uint16_t cal = (adcValue - adcMin) << adcMultShift;
+		uint16_t cal = (adcValue);// << adcMultShift;
+		//printWord(cal);
 
 		// turn on the LEDS as a bar graph
 		ledValue = (cal >> 7);
+
+		printWord(cal);
+		printString(" ");
+		//printWord(readUltrasonic());
+		printString("\r");
 
 		LED_PORT = 0;
 		for(i=0; i <= ledValue; i++) {
@@ -177,10 +206,13 @@ int main(void) {
 			printBinaryByte(cal);
 			printString(") ");
 			*/
+			/*
 			printString(" | ultrasonic: ");
-			printWord(readUltrasonic());
+			uint16_t ultra = readUltrasonic();
+			printWord(ultra);
 			transmitByte(32);  //  sp
-			printByte(ultrasonicInches());
+			printByte(ultrasonicRangeToInches(ultra));
+			*/
 			printString("\r\n");
 
 			//_delay_ms(500);
