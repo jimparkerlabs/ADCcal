@@ -49,6 +49,8 @@ void printBinaryByte(uint8_t byte);
 char nibbleToHex(uint8_t nibble);
 void printHexByte(uint8_t byte);
                                    /* Prints a byte out in hexadecimal */
+void printHexWord(uint16_t word);
+                                   /* Prints a word out in hexadecimal */
 uint8_t getNumber(void);
 /* takes in up to three ascii digits,
  converts them to a byte when press enter */

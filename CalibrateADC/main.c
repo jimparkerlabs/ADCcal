@@ -185,7 +185,11 @@ int main(void) {
 		printWord(cal);
 		printString(" ");
 		//printWord(readUltrasonic());
+		transmitByte(7);
 		printString("\r");
+		for (uint16_t dd = 0; dd <= cal*3; dd++) {
+			_delay_ms(1);
+		}
 
 		LED_PORT = 0;
 		for(i=0; i <= ledValue; i++) {

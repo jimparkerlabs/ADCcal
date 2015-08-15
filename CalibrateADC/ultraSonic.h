@@ -9,8 +9,9 @@
 #define ULTRASONIC_H_
 #include <avr/io.h>
 
-uint16_t readUltrasonic();  // read the distance from the ultrasonic peripheral
+unsigned long readUltrasonic();  // read the pulse width in clock cycles (microseconds at 1 Mhz)
 uint16_t ultrasonicCentimeters(void);  // The measured distance in the range 0 to 400 cm
 uint8_t ultrasonicInches(void);  // The measured distance in the range 0 to 157 Inches
+uint8_t ultrasonicRangeToInches(uint16_t range);  // The measured distance in the range 0 to 157 Inches
 
 #endif /* ULTRASONIC_H_ */

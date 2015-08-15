@@ -131,6 +131,17 @@ void printHexByte(uint8_t byte) {
   transmitByte(nibbleToHexCharacter(nibble));
 }
 
+void printHexWord(uint16_t word) {
+                        /* Prints a word as its hexadecimal equivalent */
+
+  uint8_t byte;
+  byte = (word & 0xff00) >> 8;
+  printHexByte(byte);
+
+  byte = (word & 0x00ff);
+  printHexByte(byte);
+}
+
 uint8_t getNumber(void) {
   // Gets a numerical 0-255 from the serial port.
   // Converts from string to number.
